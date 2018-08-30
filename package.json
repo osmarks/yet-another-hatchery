@@ -1,0 +1,20 @@
+{
+  "name": "yet-another-hatchery",
+  "version": "1.0.0",
+  "description": "A DragonCave hatchery.",
+  "license": "MIT",
+  "main": "server/index.js",
+  "devDependencies": {
+    "nodemon": "^1.18.4",
+    "parcel-bundler": "^1.9.7"
+  },
+  "dependencies": {
+    "dotenv": "^6.0.0",
+    "express": "^4.16.3",
+    "jsdom": "^12.0.0",
+    "node-fetch": "^2.2.0",
+    "pg": "^7.4.3",
+    "pg-hstore": "^2.3.2",
+    "sequelize": "^4.38.0"
+  }
+}

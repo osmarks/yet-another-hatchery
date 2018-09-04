@@ -41,8 +41,8 @@ function infoFromHtml(html) {
     const clicks = parseCounter(text, "Clicks");
     
     // Try and parse remaining-time bits
-    const days = parseInt(getCapture(text, /in: ([0-9]+) day/, 0));
-    const hours = parseInt(getCapture(text, /and ([0-9]+) hour/, 0));
+    const days = parseInt(getCapture(text, /in: (\d+) day/, 0));
+    const hours = parseInt(getCapture(text, /and (\d+) hour/, 0));
     const type = getCapture(text, /Viewing (Hatchling|Egg)/)
 
     if (isNaN(days) || isNaN(hours)) { throw new Error("Either days or hours are now invalid; has DC's format changed?"); }

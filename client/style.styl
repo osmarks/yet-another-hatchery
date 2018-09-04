@@ -1,3 +1,7 @@
+theme-primary = #3680A5
+theme-secondary = #C2EFEB
+theme-ternary = #ECFEE8
+
 horiz-center()
     display flex
     justify-content center
@@ -23,24 +27,24 @@ body
     margin 0
 
 .contents
-    padding-left: 1em;
-    padding-right: 1em;
+    padding-left 1em
+    padding-right 1em
 
 nav
-    background: gray;
+    background theme-primary
     ul
-        list-style: none;
-        padding: 1em;
-        margin: 0;
-        display: flex;
-        justify-content: space-around;
+        list-style none
+        padding 1em
+        margin 0
+        display flex
+        justify-content space-around
 
         @media (max-width: 900px)
             display block
 
     a
-        text-decoration: none;
-        color: black;
+        text-decoration none
+        color theme-ternary
 
 .dragon-pictures
     padding-top 1em

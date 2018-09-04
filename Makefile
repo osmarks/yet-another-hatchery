@@ -1,12 +1,13 @@
 ELM_MAKE=npx elm make client/Main.elm --output=dist/elm.js
 STYLUS_FILE=client/style.styl
-STYLUS_ARGS=-o dist/style.css
+STYLUS_OUTFILE=dist/style.css
+STYLUS_ARGS=-o ${STYLUS_OUTFILE}
 
 watch:
 	npx chokidar **/*.elm -c '${ELM_MAKE}' --initial & npx nodemon -w server server/index.js & npx stylus -w ${STYLUS_FILE} ${STYLUS_ARGS}
 
 stylus:
-	npx stylus ${STYLUS_ARGS} < ${STYLUS_FILE}
+	npx stylus ${STYLUS_ARGS} < ${STYLUS_FILE} > ${STYLUS_OUTFILE}
 
 elm:
 	${ELM_MAKE} --optimize

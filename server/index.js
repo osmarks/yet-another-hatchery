@@ -50,6 +50,6 @@ app.use("*.js", sendFile("elm.js"));
 app.use("*.css", sendFile("style.css"));
 app.use("*", sendFile("index.html"));
 
-setInterval(db.updateAll, process.env.UPDATE_RATE || 120000);
+setInterval(db.updateAll, parseInt(process.env.UPDATE_RATE) || 120000);
 
 app.listen(process.env.PORT || 3000, () => console.log("Listening on port 3000!"));

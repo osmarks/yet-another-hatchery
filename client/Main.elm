@@ -8,6 +8,7 @@ import Url
 import Url.Parser exposing (Parser, (</>), int, map, oneOf, s, string, top)
 import Http
 import Time
+import Markdown
 
 import API
 import Ports
@@ -27,12 +28,14 @@ type Route
     = MainPage
     | Manage
     | NotFound
+    | About
 
 routeParser : Parser (Route -> a) a
 routeParser =
      oneOf
         [ map MainPage top
         , map Manage (s "manage")
+        , map About (s "about")
         ]
 
 parseRoute : Url.Url -> Route
@@ -132,10 +135,21 @@ view model =
                 , button [ onClick Delete, class "delete-button" ] [ text "Delete" ]
                 , viewChangeResult model.lastCommandResult
                 ]
+        About ->
+            page "About"
+                [ div [ class "about-container" ] [ div [ class "about" ] [ Markdown.toHtml [] aboutText ] ] ]
         NotFound ->
             page "Page Not Found"
                 [ p [ class "center-text" ] [ text "This is not the webpage you are looking for. Try going back to the main page." ]
                 ]     
+
+aboutText : String
+aboutText = """
+This [DragonCave](https://dragcave.net/) hatchery (Yet Another Hatchery) was created partly as a fun project, and partly as I wanted to make a more effective hatchery using modern (basically, non-PHP) technologies.
+For suggestions, bug reports, etc, create an issue at [the repository](https://github.com/osmarks/yet-another-hatchery), contact me on the unofficial DC Discord server, or PM me (osmarks) on the forums.
+Eggs are viewed automatically and somewhat faster by sending out HTTP requests via JavaScript instead of via images, and will be automatically removed if sick.
+Unfortunately, at this time, only adding eggs by code is possible, due to the fact that I don't have access to the API.
+"""
 
 viewChangeResult : LastCommandResult -> Html msg
 viewChangeResult r =
@@ -214,6 +228,7 @@ navbar =
     [ ul []
         [ navLink "Home" "/"
         , navLink "Manage Dragons" "/manage"
+        , navLink "About" "/about"
         ]
     ]
 

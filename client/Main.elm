@@ -162,7 +162,7 @@ viewChangeResult r =
 
 viewDragonImage : API.Dragon -> Html msg
 viewDragonImage d =
-    a [ href ("https://dragcave.net/view/" ++ d.code) ] [ img [ src ("https://dragcave.net/image/" ++ d.code), alt d.code ] []]
+    a [ href ("https://dragcave.net/view/" ++ d.code), title d.code ] [ img [ src ("https://dragcave.net/image/" ++ d.code), alt d.code ] []]
 
 textDiv : String -> Html msg
 textDiv s = div [] [ text s ]

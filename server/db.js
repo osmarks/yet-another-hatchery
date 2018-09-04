@@ -42,6 +42,12 @@ module.exports = (db, username, pass, host) => {
         })
     }
 
+    async function updateAll() {
+        const drags = await dragons.findAll();
+        console.log("Updating", drags.length, "dragons.")
+        return Promise.all(drags.map(d => addOrUpdateDragon(d.code)));
+    }
+
     function getEligibleDragons() {
         return dragons.findAll({
             where: {
@@ -54,6 +60,7 @@ module.exports = (db, username, pass, host) => {
         dragons,
         sequelize: seq,
         addOrUpdateDragon,
-        getEligibleDragons
+        getEligibleDragons,
+        updateAll
     };
 }

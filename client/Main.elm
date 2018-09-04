@@ -2,6 +2,7 @@ import Browser
 import Browser.Navigation as Nav
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Html.Attributes as HA
 import Html.Events exposing (..)
 import Url
 import Url.Parser exposing (Parser, (</>), int, map, oneOf, s, string, top)
@@ -74,6 +75,9 @@ type Msg
     | ViewDragons
     | UpdateViewRate String
 
+viewRateLimits : { max : Float, min : Float }
+viewRateLimits = { max = 240.0, min = 10.0 }
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
@@ -95,7 +99,7 @@ update msg model =
                 Err _ -> ( model, Cmd.none )
         UpdateViewRate vr ->
             case String.toFloat vr of
-                Just v -> ( { model | viewRate = v * 1000 }, Cmd.none )
+                Just v -> ( { model | viewRate = (Basics.max viewRateLimits.min v |> Basics.min viewRateLimits.max) * 1000 }, Cmd.none )
                 Nothing -> ( model, Cmd.none )
 
 subscriptions : Model -> Sub Msg
@@ -112,7 +116,12 @@ view model =
             page "Main Page"
                 [ div [ class "view-delay-control" ]
                     [ text "Delay between view cycles (seconds): "
-                    , input [ attribute "type" "number", value <| String.fromFloat (model.viewRate / 1000), attribute "min" "10", attribute "max" "240", onInput UpdateViewRate ] []
+                    , input [ 
+                        attribute "type" "number"
+                        , value <| String.fromFloat (model.viewRate / 1000)
+                        , HA.min (String.fromFloat viewRateLimits.min)
+                        , HA.max (String.fromFloat viewRateLimits.max)
+                        , onInput UpdateViewRate ] []
                     ]
                 , viewHttpResult (div [ class "dragon-pictures" ] << List.map viewDragonImage) model.dragons
                 ]

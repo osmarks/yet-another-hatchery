@@ -45,6 +45,7 @@ const sendFile = f => (req, res) => res.sendFile(f, { root: staticDir });
 app.use("*.js", sendFile("elm.js"));
 app.use("*.css", sendFile("style.css"));
 app.use("*", sendFile("index.html"));
+app.use(express.static(staticDir));
 
 setInterval(db.updateAll, parseInt(process.env.UPDATE_RATE) || 120000);
 

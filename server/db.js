@@ -1,5 +1,7 @@
 const Sequelize = require('sequelize');
 
+const dragcave = require("./dragcave");
+
 module.exports = (db, username, pass, host) => {
     const seq = new Sequelize(db, username, pass, {
         host: host,
@@ -13,7 +15,8 @@ module.exports = (db, username, pass, host) => {
         clicks: { type: Sequelize.INTEGER, allowNull: false },
         uniqueViews: { type: Sequelize.INTEGER, allowNull: false },
         views: { type: Sequelize.INTEGER, allowNull: false },
-        hoursRemaining: { type: Sequelize.INTEGER, allowNull: false }
+        hoursRemaining: { type: Sequelize.INTEGER, allowNull: false },
+        sick: { type : Sequelize.BOOLEAN, defaultValue: false, allowNull: false }
     })
 
     seq.sync();
@@ -22,10 +25,15 @@ module.exports = (db, username, pass, host) => {
         return dragcave.info(code).then(info => {
             if (info !== null) {
                 if (info.type === "not growing") {
+                    dragons.destroy({
+                        where: {
+                            code: code
+                        }
+                    });
                     return "not growing";
                 } else {
                     info.code = code;
-                    db.dragons.upsert(info);
+                    dragons.upsert(info);
                     return info;
                 }
             } else {

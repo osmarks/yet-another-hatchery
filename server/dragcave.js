@@ -23,6 +23,10 @@ function infoFromHtml(html) {
     const text = JSDOM.fragment(html).textContent;
 
     if (/.*will die if it doesn/.exec(text) === null) { return { type: "not growing" }; }
+    
+    let sick = false;
+    if (/.*shell of the egg seems soft,/.exec(text) !== null) { sick = true }
+    if (/.*hatchling seems sick/.exec(text) !== null) { sick = true }
 
     const views = parseCounter(text, "Overall views");
     const uniqueViews = parseCounter(text, "Unique views");
@@ -38,7 +42,8 @@ function infoFromHtml(html) {
         uniqueViews,
         clicks,
         type: type == "Hatchling" ? "hatchling" : "egg",
-        hoursRemaining: days * 24 + hours
+        hoursRemaining: days * 24 + hours,
+        sick
     }
 }
 

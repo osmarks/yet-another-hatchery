@@ -149,6 +149,8 @@ This [DragonCave](https://dragcave.net/) hatchery (Yet Another Hatchery) was cre
 For suggestions, bug reports, etc, create an issue at [the repository](https://github.com/osmarks/yet-another-hatchery), contact me on the unofficial DC Discord server, or PM me (osmarks) on the forums.
 Eggs are viewed automatically and somewhat faster by sending out HTTP requests via JavaScript instead of via images, and will be automatically removed if sick.
 Unfortunately, at this time, only adding eggs by code is possible, due to the fact that I don't have access to the API.
+
+This hatchery is open-source! View the code [here](https://github.com/osmarks/yet-another-hatchery).
 """
 
 viewChangeResult : LastCommandResult -> Html msg

@@ -62,6 +62,43 @@ function dragonInfo(code) {
         .then(res => res.ok ? res.text().then(infoFromHtml) : null);
 }
 
+/*
+From EATW:
+<!-- SECRET BONUS 
+Views, unique views and clicks are weighted according to the following formula when performing the calculations: Score = Views + Unique views * 6 + Clicks * 12.
+This formula is quite close to what Dragcave uses internally. 
+An egg at the 4 day mark requires a score of ~3000-6000, depending on the breed and whether it is incubated or not. 
+Shimmerscale, Tinsel and GoN require even more, somewhere about 7000-8000, although they get sick at 6500-7000 already. 
+EATW considers a score of 5000 to be optimal as this won't cause sickness for incubated eggs, but is still sufficient to make (almost) all breeds to hatch at the 4 day mark if not incubated. 
+Gendering occurs at a score of ~4000-8000, growing at the 4 day mark requires a score of 5000-10000. 
+EATW considers the upper limit to be safe for all dragons since sickness won't occur at these numbers for hatchlings. 
+Want it? Here you can get the source: http://eatw.net/stuff.php. (this is now unavailable)
+The more hatcheries switch to that system, the safer it gets.
+UPDATE: 
+It appears like TJ09 silently raised the numbers required for ultra-rare metallic hatchlings even further. 
+EATW will now push all hatchlings towards a score of 15,000 at the 4 day mark. This should be sufficient... 
+SECRET BONUS -->
+*/
+
+function getScore(dragon) {
+    return dragon.views + (dragon.uniqueViews * 6) + (dragon.clicks * 12);
+}
+
+const nextStageAge = 72;
+const maxTime = 168;
+
+function getOptimalScore(dragon) {
+    const time = dragon.hoursRemaining;
+    const age = maxTime - time;
+    if (dragon.type == "hatchling") {
+        return 5000 + (10000 * (age / nextStageAge));
+    } else {
+        return 5000 * (age / nextStageAge);
+    }
+}
+
 module.exports = {
-    info: dragonInfo
+    info: dragonInfo,
+    getOptimalScore,
+    getScore
 };

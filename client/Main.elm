@@ -54,7 +54,7 @@ loadDragons = Http.send DragonsLoaded API.getDragons
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url key =
-    ( Model key (parseRoute url) (Ok []) None "" 10000 20000, loadDragons )
+    ( Model key (parseRoute url) (Ok []) None "" 10000 30000, loadDragons )
 
 type LastCommandResult
     = SubmissionResult (HttpResult API.Dragon)

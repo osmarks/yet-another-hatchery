@@ -1,1 +1,0 @@
-fetch("api/v1").then(res => res.text()).then(console.log)

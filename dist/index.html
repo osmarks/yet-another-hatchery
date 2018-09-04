@@ -1,5 +1,45 @@
 <html>
-    <body>
-      <script src="18bb85fdac2d487c706e1f422b143492.js"></script>
-    </body>
+  <head>
+    <style>
+      body {
+        margin: 0;
+      }
+
+      .center-text {
+        text-align: center;
+      }
+
+      .contents {
+        padding-left: 1em;
+        padding-right: 1em;
+      }
+
+      nav {
+        background: gray;
+        display: flex;
+        justify-content: space-around;
+      }
+
+      @media(max-width: 900px) {
+        nav {
+          display: block;
+        }
+      }
+
+      nav ul {
+        list-style: none;
+        padding: 1em;
+        margin: 0;
+      }
+
+      nav a {
+        text-decoration: none;
+        color: black;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="elm.js"></script>
+    <script>Elm.Main.init({node: document.body})</script>
+  </body>
 </html>

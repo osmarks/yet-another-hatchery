@@ -21,15 +21,19 @@ module.exports = (db, username, pass, host) => {
 
     seq.sync();
 
+    function removeDragon(code) {
+        return dragons.destroy({
+            where: {
+                code: code
+            }
+        });
+    }
+
     function addOrUpdateDragon(code) {
         return dragcave.info(code).then(info => {
             if (info !== null) {
                 if (info.type === "not growing") {
-                    dragons.destroy({
-                        where: {
-                            code: code
-                        }
-                    });
+                    removeDragon(code);
                     return "not growing";
                 } else {
                     info.code = code;
@@ -37,6 +41,7 @@ module.exports = (db, username, pass, host) => {
                     return info;
                 }
             } else {
+                removeDragon(code);
                 return "not found";
             }
         })
@@ -61,6 +66,7 @@ module.exports = (db, username, pass, host) => {
         sequelize: seq,
         addOrUpdateDragon,
         getEligibleDragons,
-        updateAll
+        updateAll,
+        removeDragon
     };
 }

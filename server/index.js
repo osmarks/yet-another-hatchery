@@ -23,11 +23,7 @@ api.post("/hatchery/:code", (req, res, next) => {
 });
 
 api.delete("/hatchery/:code", (req, res, next) => {
-    db.dragons.destroy({
-        where: {
-            code: req.params.code
-        }
-    }).then(qtyDeleted => {
+    db.removeDragon(code).then(qtyDeleted => {
         if (qtyDeleted == 0) {
             res.status(404).send(`Dragon ${req.params.code} not found.`);
         } else {

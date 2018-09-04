@@ -1,0 +1,52 @@
+horiz-center()
+    display flex
+    justify-content center
+
+vert-center()
+    display flex
+    align-items center
+
+.submit-button, .code-input, .delete-button
+    font-size 1.5em
+
+.code-input
+    width: 80%
+
+.http-cat-error
+    padding 1em
+    max-width 20vmax
+
+.center-text
+    text-align center
+
+body
+    margin 0
+
+.contents
+    padding-left: 1em;
+    padding-right: 1em;
+
+nav
+    background: gray;
+    ul
+        list-style: none;
+        padding: 1em;
+        margin: 0;
+        display: flex;
+        justify-content: space-around;
+
+        @media (max-width: 900px)
+            display block
+
+    a
+        text-decoration: none;
+        color: black;
+
+.dragon-pictures
+    padding-top 1em
+    flex-wrap wrap
+    horiz-center()
+    vert-center()
+
+.view-delay-control
+    horiz-center()

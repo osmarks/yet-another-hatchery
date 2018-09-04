@@ -1,45 +1,25 @@
 <html>
   <head>
-    <style>
-      body {
-        margin: 0;
-      }
-
-      .center-text {
-        text-align: center;
-      }
-
-      .contents {
-        padding-left: 1em;
-        padding-right: 1em;
-      }
-
-      nav {
-        background: gray;
-        display: flex;
-        justify-content: space-around;
-      }
-
-      @media(max-width: 900px) {
-        nav {
-          display: block;
-        }
-      }
-
-      nav ul {
-        list-style: none;
-        padding: 1em;
-        margin: 0;
-      }
-
-      nav a {
-        text-decoration: none;
-        color: black;
-      }
-    </style>
+    <link rel="stylesheet" href="/style.css">
   </head>
   <body>
-    <script src="elm.js"></script>
-    <script>Elm.Main.init({node: document.body})</script>
+    <script src="/elm.js"></script>
+    <script>
+      if ("fetch" in window) {
+        var app = Elm.Main.init({node: document.body});
+        if (app.ports) {
+          app.ports.viewDragon.subscribe(function(code) {
+            fetch("https://dragcave.net/image/" + code, {mode: "no-cors"})
+          });
+        }
+      } else {
+        var warn = document.createElement("div");
+        warn.innerHTML = "This cannot run in your ancient browser. A browser which supports 'fetch' (see <a href='https://caniuse.com/#feat=fetch'>here</a>) is required so that eggs can be viewed using SlightlyFasterViewing™.";
+        document.body.style.textAlign = "center";
+        document.body.style.paddingTop = "25vh";
+        document.body.style.fontSize = "2em";
+        document.body.appendChild(warn);
+      }
+    </script>
   </body>
 </html>

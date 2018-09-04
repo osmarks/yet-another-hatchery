@@ -42,9 +42,18 @@ module.exports = (db, username, pass, host) => {
         })
     }
 
+    function getEligibleDragons() {
+        return dragons.findAll({
+            where: {
+               sick: false 
+            }
+        });
+    }
+
     return {
         dragons,
         sequelize: seq,
-        addOrUpdateDragon
+        addOrUpdateDragon,
+        getEligibleDragons
     };
 }

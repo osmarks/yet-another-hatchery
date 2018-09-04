@@ -1,0 +1,53 @@
+.submit-button,
+.code-input,
+.delete-button {
+  font-size: 1.5em;
+}
+.code-input {
+  width: 80%;
+}
+.http-cat-error {
+  padding: 1em;
+  max-width: 20vmax;
+}
+.center-text {
+  text-align: center;
+}
+body {
+  margin: 0;
+}
+.contents {
+  padding-left: 1em;
+  padding-right: 1em;
+}
+nav {
+  background: #808080;
+}
+nav ul {
+  list-style: none;
+  padding: 1em;
+  margin: 0;
+  display: flex;
+  justify-content: space-around;
+}
+@media (max-width: 900px) {
+  nav ul {
+    display: block;
+  }
+}
+nav a {
+  text-decoration: none;
+  color: #000;
+}
+.dragon-pictures {
+  padding-top: 1em;
+  flex-wrap: wrap;
+  display: flex;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+}
+.view-delay-control {
+  display: flex;
+  justify-content: center;
+}

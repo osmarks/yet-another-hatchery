@@ -37,16 +37,17 @@ api.delete("/hatchery/:code", (req, res, next) => {
 });
 
 api.get("/hatchery", (req, res) => {
-    db.dragons.findAll().then(dragons => {
+    db.getEligibleDragons().then(dragons => {
         res.json(dragons);
     });
 });
 
 app.use("/api/", api);
 
-// On all paths not in API, send down the JS or HTML.
+// On all paths not in API, send down the JS, HTML or CSS.
 const sendFile = f => (req, res) => res.sendFile(f, { root: staticDir });
 app.use("*.js", sendFile("elm.js"));
+app.use("*.css", sendFile("style.css"));
 app.use("*", sendFile("index.html"));
 
 app.listen(3000, () => console.log("Listening on port 3000!"));

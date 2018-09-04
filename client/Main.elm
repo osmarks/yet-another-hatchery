@@ -54,7 +54,7 @@ loadDragons = Http.send DragonsLoaded API.getDragons
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url key =
-    ( Model key (parseRoute url) (Ok []) None "" 10000 60000, loadDragons )
+    ( Model key (parseRoute url) (Ok []) None "" 10000 20000, loadDragons )
 
 type LastCommandResult
     = SubmissionResult (HttpResult API.Dragon)
@@ -89,7 +89,10 @@ update msg model =
         SubmitResult r -> ( { model | lastCommandResult = SubmissionResult r }, Cmd.none )
         DeleteResult r -> ( { model | lastCommandResult = DeletionResult r }, Cmd.none )
         RefreshDragons -> ( model, loadDragons )
-        ViewDragons -> ( model, Cmd.none )
+        ViewDragons ->
+            case model.dragons of
+                Ok ds -> ( model, Cmd.batch <| List.map (\d -> Ports.viewDragon d.code) ds )
+                Err _ -> ( model, Cmd.none )
         UpdateViewRate vr ->
             case String.toFloat vr of
                 Just v -> ( { model | viewRate = v * 1000 }, Cmd.none )
@@ -134,7 +137,7 @@ viewChangeResult r =
 
 viewDragonImage : API.Dragon -> Html msg
 viewDragonImage d =
-    img [ src ("https://dragcave.net/image/" ++ d.code) ] []
+    a [ href ("https://dragcave.net/view/" ++ d.code) ] [ img [ src ("https://dragcave.net/image/" ++ d.code) ] []]
 
 textDiv : String -> Html msg
 textDiv s = div [] [ text s ]

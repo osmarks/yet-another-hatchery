@@ -126,7 +126,7 @@ view model =
                         , HA.max (String.fromFloat viewRateLimits.max)
                         , onInput UpdateViewRate ] []
                     ]
-                , viewHttpResult (div [ class "dragon-pictures" ] << List.map viewDragonImage) model.dragons
+                , viewHttpResult viewDragons model.dragons
                 ]
         Manage -> 
             page "Manage Dragons"
@@ -159,6 +159,13 @@ viewChangeResult r =
         SubmissionResult re -> viewHttpResult viewDragonInfo re
         DeletionResult re -> viewHttpResult (\_ -> textDiv "Deletion successful.") re
         None -> div [] []
+
+viewDragons : List API.Dragon -> Html msg
+viewDragons ds =
+    div []
+        [ div [ class "dragon-count" ] [ text <| String.fromInt <| List.length ds, text " dragons are currently in the hatchery." ]
+        , div [ class "dragon-pictures" ] <| List.map viewDragonImage ds
+        ]
 
 viewDragonImage : API.Dragon -> Html msg
 viewDragonImage d =

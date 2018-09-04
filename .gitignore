@@ -3,3 +3,5 @@ node_modules
 .cache
 dist/*.js
 elm-stuff
+dist/style.css
+dist/elm.js

@@ -14,6 +14,8 @@ Other configuration options:
 * `PORT` - port to run on, defaults to 3000.
 * `UPDATE_RATE` - interval between each run of fetching dragon data.
 
+These options can be specified in `.env` as pairs of `ENV_VAR=value`.
+
 Running `node server/index.js` should then start the server.
 It can be used directly on the port you set, though it is recommended that you use a reverse proxy in front of it for HTTPS.
 

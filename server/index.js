@@ -1,5 +1,6 @@
 require("dotenv").config();
 const express = require("express");
+const compression = require("compression");
 
 const db = require("./db")(process.env.DB, process.env.DB_USER, process.env.DB_PASS, process.env.DB_HOST);
 const dragcave = require("./dragcave");
@@ -40,13 +41,16 @@ api.get("/hatchery", (req, res) => {
 
 app.use("/api/", api);
 
-app.use(express.static(staticDir));
-// On all paths not in API, send down the JS, HTML or CSS.
+const staticFiles = express.Router();
+staticFiles.use(express.static(staticDir));
 const sendFile = f => (req, res) => res.sendFile(f, { root: staticDir });
-app.use("*.js", sendFile("elm.js"));
-app.use("*.css", sendFile("style.css"));
-app.use("*", sendFile("index.html"));
+staticFiles.use("*.js", sendFile("elm.js"));
+staticFiles.use("*.css", sendFile("style.css"));
+staticFiles.use("*", sendFile("index.html"));
+staticFiles.use(compression());
+
+app.use(staticFiles);
 
 setInterval(db.updateAll, parseInt(process.env.UPDATE_RATE) || 120000);
 
-app.listen(process.env.PORT || 3000, () => console.log("Listening on port 3000!"));
+app.listen(parseInt(process.env.PORT) || 3000, () => console.log("Listening on port 3000!"));

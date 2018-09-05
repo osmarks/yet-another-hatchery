@@ -135,6 +135,10 @@ Eggs are viewed automatically and somewhat faster by sending out HTTP requests v
 Unfortunately, at this time, only adding eggs by code is possible, due to the fact that I don't have access to the API.
 
 This hatchery is open-source! View the code [here](https://github.com/osmarks/yet-another-hatchery).
+
+Here is our mascot, Closed Timelike Curve the Chrono Xenowyrm:
+
+[![Closed Timelike Curve](https://dragcave.net/image/4UtuJ)](https://dragcave.net/view/n/Closed%20Timelike%20Curve)
 """
 
 viewDragons : List Dragon -> Html msg

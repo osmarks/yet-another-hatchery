@@ -12,6 +12,8 @@ const app = express();
 const api = express.Router();
 api.use(express.json());
 
+// Single-thing submit
+// Takes code in URL
 api.post("/hatchery/:code", (req, res, next) => {
     const code = req.params.code;
     db.addOrUpdateDragon(code)
@@ -23,6 +25,26 @@ api.post("/hatchery/:code", (req, res, next) => {
     .catch(next);
 });
 
+// Multi-thing submit
+// Takes array of codes in body
+api.post("/hatchery", async (req, res, next) => {
+    const codes = req.body;
+    if (Array.isArray(codes)) {
+        const results = await Promise.all(codes.map(db.addOrUpdateDragon));
+        for (let ix = 0; ix < results.length; ix++) { // can't use a forEach, we need early exit
+            const result = results[ix];
+            // TODO: make this code not be duplicated
+            if (result === "not found") { res.status(404).send(`Dragon ${codes[ix]} not found.`); break; }
+            else if (result === "not growing") { res.status(400).send(`Dragon ${code[ix]} is not growing.`); break; }
+        }
+        res.json(results);
+    } else {
+        res.status(400).send("Not an array.");
+    }
+});
+
+// Single-thing delete
+// Takes code in URL
 api.delete("/hatchery/:code", (req, res, next) => {
     db.removeDragon(code).then(qtyDeleted => {
         if (qtyDeleted == 0) {
@@ -33,6 +55,25 @@ api.delete("/hatchery/:code", (req, res, next) => {
     }).catch(next);
 });
 
+// Multi-thing delete
+// Takes array of codes in body
+api.delete("/hatchery/", async (req, res, next) => {
+    const codes = req.body;
+    if (Array.isArray(codes)) {
+        const results = await Promise.all(codes.map(db.removeDragon));
+        for (let ix = 0; ix < results.length; ix++) {
+            if (results[ix] == 0) { // if no rows deleted
+                res.status(404).send(`Dragon ${codes[ix]} not found.`);
+                break;
+            }
+        }
+        res.status(204).end();
+    } else {
+        res.status(400).send("Not an array.");
+    }
+});
+
+// Get all eligible dragons
 api.get("/hatchery", (req, res) => {
     db.getEligibleDragons().then(dragons => {
         res.json(dragons);
@@ -44,9 +85,9 @@ app.use("/api/", api);
 const staticFiles = express.Router();
 staticFiles.use(express.static(staticDir));
 const sendFile = f => (req, res) => res.sendFile(f, { root: staticDir });
-staticFiles.use("*.js", sendFile("elm.js"));
-staticFiles.use("*.css", sendFile("style.css"));
-staticFiles.use("*", sendFile("index.html"));
+staticFiles.get("*.js", sendFile("elm.js"));
+staticFiles.get("*.css", sendFile("style.css"));
+staticFiles.get("*", sendFile("index.html"));
 staticFiles.use(compression());
 
 app.use(staticFiles);

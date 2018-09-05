@@ -24,7 +24,7 @@ module.exports = (db, username, pass, host) => {
     function removeDragon(code) {
         return dragons.destroy({
             where: {
-                code: code
+                code
             }
         });
     }

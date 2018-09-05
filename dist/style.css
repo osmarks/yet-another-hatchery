@@ -21,7 +21,7 @@ body {
   padding-right: 1em;
 }
 nav {
-  background: #808080;
+  background: #3680a5;
 }
 nav ul {
   list-style: none;
@@ -29,6 +29,7 @@ nav ul {
   margin: 0;
   display: flex;
   justify-content: space-around;
+  align-items: center;
 }
 @media (max-width: 900px) {
   nav ul {
@@ -37,7 +38,7 @@ nav ul {
 }
 nav a {
   text-decoration: none;
-  color: #000;
+  color: #ecfee8;
 }
 .dragon-pictures {
   padding-top: 1em;
@@ -57,4 +58,10 @@ nav a {
 }
 .about {
   max-width: 700px;
+}
+.dragon-count {
+  text-align: center;
+}
+.logo {
+  width: 5vw;
 }

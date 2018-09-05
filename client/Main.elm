@@ -12,6 +12,9 @@ import Markdown
 
 import API
 import Ports
+import ManageDragons
+import Util
+import Dragon exposing (Dragon)
 
 main : Program () Model Msg
 main =
@@ -41,16 +44,13 @@ routeParser =
 parseRoute : Url.Url -> Route
 parseRoute url = Maybe.withDefault NotFound (Url.Parser.parse routeParser url)
 
-type alias HttpResult a = Result Http.Error a
-
 type alias Model =
     { key : Nav.Key
     , route : Route
-    , dragons : HttpResult (List API.Dragon)
-    , lastCommandResult : LastCommandResult
-    , newDragonCode : String
+    , dragons : Util.HttpResult (List Dragon)
     , viewRate : Float
     , refreshRate : Float
+    , manageDragons : ManageDragons.Model
     }
 
 loadDragons : Cmd Msg
@@ -58,25 +58,16 @@ loadDragons = Http.send DragonsLoaded API.getDragons
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url key =
-    ( Model key (parseRoute url) (Ok []) None "" 10000 30000, loadDragons )
-
-type LastCommandResult
-    = SubmissionResult (HttpResult API.Dragon)
-    | DeletionResult (HttpResult ())
-    | None
+    ( Model key (parseRoute url) (Ok []) 10000 30000 ManageDragons.init, loadDragons )
 
 type Msg
     = LinkClicked Browser.UrlRequest
     | UrlChanged Url.Url
-    | DragonsLoaded (HttpResult (List API.Dragon))
-    | CodeChange String
-    | Submit
-    | Delete
-    | SubmitResult (HttpResult API.Dragon)
-    | DeleteResult (HttpResult ())
+    | DragonsLoaded (Util.HttpResult (List Dragon))
     | RefreshDragons
     | ViewDragons
     | UpdateViewRate String
+    | ManageDragons ManageDragons.Msg
 
 viewRateLimits : { max : Float, min : Float }
 viewRateLimits = { max = 240.0, min = 10.0 }
@@ -90,11 +81,6 @@ update msg model =
                 Browser.External href -> ( model, Nav.load href )
         UrlChanged url -> ( { model | route = parseRoute url }, Ports.viewDragon "PhZHf" )
         DragonsLoaded d -> ( { model | dragons = d }, Cmd.none )
-        CodeChange c -> ( { model | newDragonCode = c }, Cmd.none )
-        Submit -> ( model, Http.send SubmitResult (API.submitDragon model.newDragonCode) )
-        Delete -> ( model, Http.send DeleteResult (API.deleteDragon model.newDragonCode) )
-        SubmitResult r -> ( { model | lastCommandResult = SubmissionResult r }, Cmd.none )
-        DeleteResult r -> ( { model | lastCommandResult = DeletionResult r }, Cmd.none )
         RefreshDragons -> ( model, loadDragons )
         ViewDragons ->
             case model.dragons of
@@ -104,6 +90,9 @@ update msg model =
             case String.toFloat vr of
                 Just v -> ( { model | viewRate = (Basics.max viewRateLimits.min v |> Basics.min viewRateLimits.max) * 1000 }, Cmd.none )
                 Nothing -> ( model, Cmd.none )
+        ManageDragons m ->
+            let ( mdl, cmd ) = ManageDragons.update m model.manageDragons
+            in ( { model | manageDragons = mdl }, Cmd.map ManageDragons cmd )
 
 subscriptions : Model -> Sub Msg
 subscriptions m =
@@ -126,15 +115,10 @@ view model =
                         , HA.max (String.fromFloat viewRateLimits.max)
                         , onInput UpdateViewRate ] []
                     ]
-                , viewHttpResult viewDragons model.dragons
+                , Util.viewHttpResult viewDragons model.dragons
                 ]
         Manage -> 
-            page "Manage Dragons"
-                [ input [ attribute "type" "text", placeholder "Code", value model.newDragonCode, onInput CodeChange, class "code-input" ] []
-                , button [ onClick Submit, class "submit-button" ] [ text "Submit" ]
-                , button [ onClick Delete, class "delete-button" ] [ text "Delete" ]
-                , viewChangeResult model.lastCommandResult
-                ]
+            page "Manage Dragons" [ ManageDragons.view model.manageDragons |> Html.map ManageDragons ]
         About ->
             page "About"
                 [ div [ class "about-container" ] [ div [ class "about" ] [ Markdown.toHtml [] aboutText ] ] ]
@@ -153,73 +137,12 @@ Unfortunately, at this time, only adding eggs by code is possible, due to the fa
 This hatchery is open-source! View the code [here](https://github.com/osmarks/yet-another-hatchery).
 """
 
-viewChangeResult : LastCommandResult -> Html msg
-viewChangeResult r =
-    case r of
-        SubmissionResult re -> viewHttpResult viewDragonInfo re
-        DeletionResult re -> viewHttpResult (\_ -> textDiv "Deletion successful.") re
-        None -> div [] []
-
-viewDragons : List API.Dragon -> Html msg
+viewDragons : List Dragon -> Html msg
 viewDragons ds =
     div []
         [ div [ class "dragon-count" ] [ text <| String.fromInt <| List.length ds, text " dragons are currently in the hatchery, not sick and within safe view limits." ]
-        , div [ class "dragon-pictures" ] <| List.map viewDragonImage ds
+        , div [ class "dragon-pictures" ] <| List.map Dragon.viewImage ds
         ]
-
-viewDragonImage : API.Dragon -> Html msg
-viewDragonImage d =
-    a [ href ("https://dragcave.net/view/" ++ d.code), title d.code, target "_blank" ] [ img [ src ("https://dragcave.net/image/" ++ d.code), alt d.code ] []]
-
-textDiv : String -> Html msg
-textDiv s = div [] [ text s ]
-
-field : String -> String -> Html msg
-field name contents =
-    textDiv (name ++ ": " ++ contents)
-
-viewBool : Bool -> String
-viewBool b =
-    case b of
-        True -> "yes"
-        False -> "no"
-
-viewDragonType : API.DragonType -> String
-viewDragonType t =
-    case t of
-        API.Hatchling -> "Hatchling"
-        API.Egg -> "Egg"
-
-viewDragonInfo : API.Dragon -> Html msg
-viewDragonInfo d = div [ class "dragon-info" ]
-    [ field "Sick" (viewBool d.sick)
-    , field "Views" (String.fromInt d.views)
-    , field "Unique Views" (String.fromInt d.uniqueViews)
-    , field "Clicks" (String.fromInt d.clicks)
-    , field "Code" d.code
-    , field "Dragon Type" (viewDragonType d.dragonType)
-    , field "Hours of Life Remaining" (String.fromInt d.hours)
-    ]
-
-viewHttpError : Http.Error -> Html msg
-viewHttpError e =
-    case e of
-        Http.BadUrl u -> text <| "Invalid URL in request: " ++ u
-        Http.Timeout -> text "Request timed out"
-        Http.NetworkError -> text "Network error"
-        Http.BadStatus r -> div [] -- use http.cat for errors!
-            [ textDiv <| (String.fromInt r.status.code) ++ " " ++ r.status.message ++ "."
-            , textDiv r.body
-            , img [ class "http-cat-error", src ("https://http.cat/" ++ String.fromInt r.status.code) ] []
-            ]
-        Http.BadPayload emsg _ -> text emsg
-
-viewHttpResult : (a -> Html msg) -> Result Http.Error a -> Html msg
-viewHttpResult v res =
-    case res of
-        Ok x -> v x
-        Err e -> 
-            div [ class "error" ] [ viewHttpError e ]
 
 page : String -> List (Html msg) -> Browser.Document msg
 page title contents =

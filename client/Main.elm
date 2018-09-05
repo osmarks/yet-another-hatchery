@@ -235,7 +235,8 @@ navbar : Html msg
 navbar =
     nav []
     [ ul []
-        [ navLink "Home" "/"
+        [ a [ href "/" ] [ img [ src "/logo.png", class "logo" ] [] ]
+        , navLink "Home" "/"
         , navLink "Manage Dragons" "/manage"
         , navLink "About" "/about"
         ]

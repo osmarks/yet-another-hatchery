@@ -91,7 +91,7 @@ function getOptimalScore(dragon) {
     const time = dragon.hoursRemaining;
     const age = maxTime - time;
     if (dragon.type == "hatchling") {
-        return 5000 + (10000 * (age / nextStageAge));
+        return 5000 + (8000 * (age / nextStageAge));
     } else {
         return 5000 * (age / nextStageAge);
     }

@@ -163,7 +163,7 @@ viewChangeResult r =
 viewDragons : List API.Dragon -> Html msg
 viewDragons ds =
     div []
-        [ div [ class "dragon-count" ] [ text <| String.fromInt <| List.length ds, text " dragons are currently in the hatchery." ]
+        [ div [ class "dragon-count" ] [ text <| String.fromInt <| List.length ds, text " dragons are currently in the hatchery, not sick and within safe view limits." ]
         , div [ class "dragon-pictures" ] <| List.map viewDragonImage ds
         ]
 

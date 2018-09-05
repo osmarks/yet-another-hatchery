@@ -97,8 +97,18 @@ function getOptimalScore(dragon) {
     }
 }
 
+function getScoreRatio(dragon) {
+    return getScore(dragon) / getOptimalScore(dragon);
+}
+
+function isSafe(dragon) {
+    return getScoreRatio(dragon) < 1.5;
+}
+
 module.exports = {
     info: dragonInfo,
     getOptimalScore,
-    getScore
+    getScore,
+    isSafe,
+    getScoreRatio
 };

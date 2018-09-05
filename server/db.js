@@ -58,7 +58,7 @@ module.exports = (db, username, pass, host) => {
             where: {
                sick: false 
             }
-        });
+        }).then(dragons => dragons.filter(dragcave.isSafe));
     }
 
     return {
